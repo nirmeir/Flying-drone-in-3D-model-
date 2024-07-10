@@ -1,0 +1,45 @@
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
+
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+
+}
+
+dependencies {
+    implementation 'org.openjfx:javafx-controls:22.0.1'
+    implementation 'org.openjfx:javafx-fxml:22.0.1'
+    implementation 'org.jmonkeyengine:jme3-core:3.5.2-stable'
+    implementation 'org.jmonkeyengine:jme3-desktop:3.5.2-stable'
+    implementation 'org.jmonkeyengine:jme3-lwjgl:3.5.2-stable'
+    implementation 'org.jmonkeyengine:jme3-jogg:3.5.2-stable'
+    implementation 'org.openjfx:javafx-swing:22.0.1' 
+    implementation 'org.swinglabs:swingx:1.6.1'
+
+}
+
+application {
+    mainClassName = 'com.example.DroneSimulation'
+    
+
+    applicationDefaultJvmArgs = [
+        '--module-path', 'C:/Users/nirme/Downloads/openjfx-22.0.1_windows-x64_bin-sdk/javafx-sdk-22.0.1/lib',
+        '--add-modules', 'javafx.controls,javafx.fxml'
+    ]
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += [
+        '--module-path', 'C:/Users/nirme/Downloads/openjfx-22.0.1_windows-x64_bin-sdk/javafx-sdk-22.0.1/lib',
+        '--add-modules', 'javafx.controls,javafx.fxml'
+    ]
+}
+javafx {
+    version = "22.0.1"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing' ]
+}
