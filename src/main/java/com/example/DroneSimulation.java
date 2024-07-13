@@ -156,9 +156,13 @@ public class DroneSimulation extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
+        
         if (drone.isAutopilotEnabled()) {
             drone.autopilotMove(tpf, obstacleDetector);
-        } else {
+        } else if (drone.targetPosition != null) {
+            drone.flyToUpdate(tpf);
+        }
+         else {
             drone.manualMove(tpf, obstacleDetector);
         }
         // Update the trail with the drone's current position

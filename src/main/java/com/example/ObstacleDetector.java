@@ -45,7 +45,7 @@ public class ObstacleDetector {
         }
 
         if (!obstacleDetected) {
-            System.out.println("No obstacle detected in direction: " + directionKey);
+            // System.out.println("No obstacle detected in direction: " + directionKey);
         }
 
         return obstacleDetected;

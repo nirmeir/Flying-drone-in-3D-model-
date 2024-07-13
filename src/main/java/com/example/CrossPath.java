@@ -11,6 +11,8 @@ import com.jme3.scene.shape.Sphere;
 
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CrossPath {
     private final AssetManager assetManager;
@@ -21,6 +23,9 @@ public class CrossPath {
 
     private static final Vector3f INITIAL_DRONE_POSITION = new Vector3f(20, 5, 20); // Must match the drone's initial position
     private static final String CROSS_MARK_NAME = "CrossMark";
+
+    // Create a thread pool with 2 threads
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     public CrossPath(AssetManager assetManager, Node rootNode, float distanceThreshold) {
         this.assetManager = assetManager;
@@ -64,7 +69,7 @@ public class CrossPath {
 
     public void returnHome(Drone drone) {
         System.out.println("Returning home");
-        new Thread(() -> {
+        executorService.submit(() -> {
             while (!waypoints.isEmpty()) {
                 Vector3f waypoint = waypoints.removeLast();
                 moveDroneToWaypoint(drone, waypoint, waypoints.isEmpty());
@@ -75,7 +80,7 @@ public class CrossPath {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
     }
 
     private void moveDroneToWaypoint(Drone drone, Vector3f waypoint, boolean isLastWaypoint) {
@@ -83,20 +88,20 @@ public class CrossPath {
         float distance = currentPosition.distance(waypoint);
         float speed = 2f; // Adjust the speed as necessary
         float travelTime = distance / speed; // Time to travel to the waypoint
-
+    
         long startTime = System.currentTimeMillis();
         long endTime = startTime + (long) (travelTime * 1000);
-
-        new Thread(() -> {
+    
+        executorService.submit(() -> {
             while (System.currentTimeMillis() < endTime) {
                 float t = (System.currentTimeMillis() - startTime) / (float) (endTime - startTime);
-                Vector3f newPosition = currentPosition.interpolateLocal(waypoint, t);
+                Vector3f newPosition = new Vector3f().interpolateLocal(currentPosition, waypoint, t);
                 enqueueToRootNode(() -> {
                     drone.setLocalTranslation(newPosition.x, newPosition.y, newPosition.z);
                     return null;
                 });
                 try {
-                    Thread.sleep(50); // Reduce the update frequency to allow smoother transitions
+                    Thread.sleep(50); // Increase the sleep duration to allow smoother transitions
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -108,8 +113,9 @@ public class CrossPath {
                 }
                 return null;
             });
-        }).start();
+        });
     }
+    
 
     private void removeCrossMark(Vector3f position) {
         enqueueToRootNode(() -> {
