@@ -1,3 +1,5 @@
+Created by Nir Meir, Ashraf Hijazi, Abed Massarwa
+
 # Drone Simulation Project
 
 ## Project Description
